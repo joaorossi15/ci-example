@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from typing import Dict
 
 app = FastAPI()
-aa.kshOIDYAIOPDW8PE
 class Item(BaseModel):
     name: str
     description: str
