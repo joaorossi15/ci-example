@@ -1,0 +1,28 @@
+name: test-example
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+      branches:
+        - main
+
+jobs:
+  build:
+    name: Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run docker compose
+        run: docker compose exec web pytest
+
+      - name: Wait 5s
+        run: sleep 5
+
+      - name: Test endpoint
+        run: curl --fail http://localhost:8000/items/ 
+
+      - name: Close docker compose
+        if: always()
+        run: docker compose down
