@@ -1,0 +1,42 @@
+name: Buildar
+
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+      branches:
+        - main
+
+jobs:
+  build:
+    name: verificacao
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: clonar
+        uses: actions/checkout@v2
+
+      - name: Creating .env
+      run: 
+          cat <<EOF > .env
+          POSTGRES_HOST=db
+          POSTGRES_DB=postgres
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=password
+          EOF
+
+          - name: rodar o compose do docker
+            run: docker compose up -d --buildNossa
+
+          - name: Esperar o build
+            run: sleep 10
+
+          - name: testar o ip
+            run: curl --fail http://locahost:8000/items/
+
+          - name: fechar containers
+            if: always()
+            run: docker compose down
+
+
