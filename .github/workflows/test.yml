@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+
+      - name: Creating .env
+        run: |
+          cat <<EOF > .env
+          POSTGRES_HOST=db
+          POSTGRES_DB=postgres
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=password
+          EOF
+
+      - name: Run docker compose
+        run: docker compose up -d --build
+
+      - name: Wait building
+        run: sleep 5
+
+      - name: Test
+        run: docker compose exec web pytest
+
+      - name: Closing containers
+        if: always()
+        run: docker compose down
